@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/components/Card';
+import { showAlert } from '@/lib/dialog';
 import { deleteAllData, getConversations, getProfile, Profile } from '@/lib/storage';
 import { colors, spacing } from '@/lib/theme';
 
@@ -41,12 +42,12 @@ export default function Settings() {
   );
 
   const notReady = (feature: string) =>
-    Alert.alert(feature, 'このMVPではまだ準備中の機能です。');
+    showAlert(feature, 'このMVPではまだ準備中の機能です。');
 
   const exportData = async () => {
     const conversations = await getConversations();
     if (conversations.length === 0) {
-      Alert.alert('書き出し', 'まだ記録がありません。');
+      showAlert('書き出し', 'まだ記録がありません。');
       return;
     }
     const text = conversations
@@ -56,14 +57,19 @@ export default function Settings() {
       })
       .join('\n\n---\n\n');
     if (Platform.OS === 'web') {
-      Alert.alert('書き出し', 'Web版では現在テキストのコピーのみ対応しています（今後対応予定）。');
+      try {
+        await navigator.clipboard.writeText(text);
+        showAlert('書き出し', 'きろくをクリップボードにコピーしました。');
+      } catch {
+        showAlert('書き出し', 'コピーに失敗しました。ブラウザのクリップボード権限をご確認ください。');
+      }
       return;
     }
     await Share.share({ message: text, title: 'Guchibo きろく書き出し' });
   };
 
   const confirmDelete = () => {
-    Alert.alert(
+    showAlert(
       'データを削除する',
       'プロフィールと会話の記録がすべて削除されます。この操作は取り消せません。',
       [

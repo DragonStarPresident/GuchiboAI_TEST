@@ -2,7 +2,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -12,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { showAlert } from '@/lib/dialog';
 import { updateProfile } from '@/lib/storage';
 import { colors, spacing } from '@/lib/theme';
 
@@ -33,7 +33,7 @@ export default function Register() {
   };
 
   const notReady = (provider: string) => {
-    Alert.alert(
+    showAlert(
       `${provider}でのログイン`,
       'このMVPではまだ準備中です。まずは「ニックネームではじめる」からお試しください。',
     );

@@ -3,7 +3,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -15,6 +14,7 @@ import {
 } from 'react-native';
 import { ChatBubble } from '@/components/ChatBubble';
 import { containsCrisisKeyword } from '@/lib/crisis';
+import { showAlert } from '@/lib/dialog';
 import {
   ChatMessage,
   Conversation,
@@ -150,7 +150,7 @@ export default function Chat() {
       };
       await persist({ ...updated, messages: [...updated.messages, aiMsg], updatedAt: new Date().toISOString() });
     } catch (e: any) {
-      Alert.alert(
+      showAlert(
         '通信エラー',
         e?.message?.includes('ANTHROPIC_API_KEY') || e?.message?.includes('missing_api_key')
           ? 'サーバーにAPIキーが設定されていません（開発者向け: .env の ANTHROPIC_API_KEY を確認してください）。'

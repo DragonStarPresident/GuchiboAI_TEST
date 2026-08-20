@@ -2,8 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { showAlert } from '@/lib/dialog';
 import { updateProfile } from '@/lib/storage';
 import { colors, spacing } from '@/lib/theme';
 
@@ -26,7 +27,7 @@ export default function Subscription() {
     // ここではローカルにプラン状態を保存し、体験として有料機能を解放するのみ。
     await updateProfile({ plan: 'plus' });
     setLoading(false);
-    Alert.alert(
+    showAlert(
       'Guchibo Plus',
       '（MVPデモ）Plusプランを有効にしました。実際の決済連携は今後の実装が必要です。',
       [{ text: 'OK', onPress: () => router.back() }],
