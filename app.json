@@ -1,41 +1,52 @@
 {
   "expo": {
-    "name": "guchibo-app",
+    "name": "Guchibo",
     "slug": "guchibo-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+      "supportsTablet": false,
+      "bundleIdentifier": "jp.guchibo.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "web": {
-      "bundler": "metro",
-      "output": "server",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
+      "expo-status-bar",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#F6F4FB"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true
+          }
         }
       ]
     ],
+    "scheme": "guchibo",
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7641a12f-b62e-41fe-9452-3a4bff33af0e"
+      }
+    },
+    "owner": "dr.tatsuki"
   }
 }

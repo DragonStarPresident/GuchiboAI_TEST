@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { ChatBubble } from '@/components/ChatBubble';
 import { containsCrisisKeyword } from '@/lib/crisis';
+import { ChatNotConfiguredError, sendChat } from '@/lib/api';
 import { showAlert } from '@/lib/dialog';
 import {
   ChatMessage,
@@ -121,25 +122,16 @@ export default function Chat() {
 
     setSending(true);
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          // 先頭のAI挨拶メッセージ（クライアント側で生成した非APIメッセージ）を除き、
-          // ユーザー発話から始まる履歴としてAPIに渡す
-          messages: updated.messages
-            .slice(1)
-            .map((m) => ({ role: m.role, content: m.content })),
-          moodLabel: moodOptions.find((m) => m.key === conversation.mood)?.label ?? null,
-          triggers: conversation.triggers,
-          memo: conversation.memo,
-        }),
+      const data = await sendChat({
+        // 先頭のAI挨拶メッセージ（クライアント側で生成した非APIメッセージ）を除き、
+        // ユーザー発話から始まる履歴としてAPIに渡す
+        messages: updated.messages
+          .slice(1)
+          .map((m) => ({ role: m.role, content: m.content })),
+        moodLabel: moodOptions.find((m) => m.key === conversation.mood)?.label ?? null,
+        triggers: conversation.triggers,
+        memo: conversation.memo,
       });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message || 'API error');
-      }
 
       const aiMsg: ChatMessage = {
         id: genId(),
@@ -152,8 +144,8 @@ export default function Chat() {
     } catch (e: any) {
       showAlert(
         '通信エラー',
-        e?.message?.includes('ANTHROPIC_API_KEY') || e?.message?.includes('missing_api_key')
-          ? 'サーバーにAPIキーが設定されていません（開発者向け: .env の ANTHROPIC_API_KEY を確認してください）。'
+        e instanceof ChatNotConfiguredError
+          ? 'AIとの接続はまだ準備中です（開発者向け: チャットAPIが未設定です）。'
           : '少し時間をおいてもう一度お試しください。',
       );
     } finally {

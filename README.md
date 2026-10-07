@@ -1,77 +1,46 @@
-# Guchibo（MVP）
+# Guchibo（グチボ）
 
 孤独に、会話という居場所を。
 
-子育て中の母親や、社会人になったばかりで悩みを言葉にできず抱え込みやすい人に向けた、
-AIメンタルケア対話アプリのMVPです。説教・診断・分析ではなく、否定せず受け止める
-「感情受容型」の対話を軸にしています。
+子育て中の母親向けAI対話アプリ。Expo SDK 57（React Native 0.86）＋ Expo Router ＋ TypeScript。
 
-このリポジトリは [Expo Router](https://docs.expo.dev/router/introduction/) を
-用いた React Native アプリで、`npm run web` でブラウザ上からそのまま動作確認できます。
-同じコードベースから iOS / Android アプリも書き出せます。
+## フォルダ構成
 
-## 関連ドキュメント
-
-- **[docs/SPEC.md](./docs/SPEC.md)**：現状の仕様・機能一覧（プロジェクトメンバー向け）
-- **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)**：開発の経緯・技術背景・今後の実装課題（開発者向け）
-
-## セットアップ
-
-```bash
-npm install
-cp .env.example .env
-# .env に ANTHROPIC_API_KEY を設定してください（https://console.anthropic.com/）
-npm run web
+```
+src/app/         画面（Expo Routerのファイルベースルーティング）
+src/components/  共通UI（Card, PrimaryButton, ChatBubble）
+src/lib/         ロジック（theme, storage, crisis, dialog, api, systemPrompt）
+assets/          アイコン・スプラッシュ画像
+eas.json         EASビルド設定（development / preview / production）
 ```
 
-チャット機能はサーバーサイドの API Route（`app/api/chat+api.ts`）から
-Anthropic Claude API を呼び出します。APIキーはクライアントバンドルに含まれません。
+## 実機・シミュレータで動かす
 
-> ⚠️ **開発中は `.env` の `EXPO_PUBLIC_CRISIS_TEST_MODE=true` を必ず有効にしてください。**
-> 危機介入画面（119番・よりそいホットライン等）の電話番号がダミーに切り替わり、
-> テスト中に誤って実際の窓口や救急へ発信してしまう事故を防げます。
-> **本番リリース時はこの行を削除するか `false` にして、実際の番号に戻すのを忘れないでください。**
+前提: Xcode 26.4以上（Xcode 27ではiOS 27のシミュレータも必要）、Xcode → Settings → Accounts にApple IDを登録済み、iPhoneのデベロッパモードがオン。
 
-## テスト手順
+1. 依存パッケージを入れる: `npm install`
+2. iPhoneをケーブルでMacにつなぎ、`npx expo run:ios --device` を実行して一覧からiPhoneを選ぶ（シミュレータの場合はiOS 27の機種を選ぶ）
+3. 2回目以降、ネイティブ部分に変更がなければ `npx expo start` で開発サーバーだけ起動し、インストール済みのGuchiboを開く（MacとiPhoneは同じWi-Fi）
 
-実装を変更したときは、以下を一通り確認してください。
+ネイティブモジュールを追加したときや app.json のプラグイン設定を変えたときは、`rm -rf ios` してから2をやり直す。
 
-1. **起動〜登録**：起動画面→自動でオンボーディングへ遷移するか／3枚めくれてスキップも効くか／
-   「ニックネームではじめる」で登録できるか（Apple/Googleは「準備中」表示で正常）
-2. **気分入力〜チャット**：ホームで気分・きっかけを選び「Guchiboに話してみる」でチャットへ。
-   メッセージを送って数秒後にClaudeから返信が返るか（API疎通の確認）
-3. **安全機能（重要）**：チャットで「もう限界」「死にたい」等を送信し、返信を待たずに
-   危機介入画面へ自動遷移するか。**`.env` に `EXPO_PUBLIC_CRISIS_TEST_MODE=true` を設定した状態で行うこと**
-   （本物の相談窓口・119へ誤発信しないため）
-4. **きろく**：直前の会話がカードとして表示されるか／タップで詳細が見られるか／検索が効くか
-5. **設定**：ニックネームが反映されているか／「記録の保存と書き出し」（Webはクリップボードコピー）／
-   「データを削除する」で確認ダイアログが出て、削除後オンボーディングに戻るか
-   （**全データが消えるので最後に試す**）
-6. **サブスク**：設定の「Guchibo Plusにする」→プラン選択→「7日間、無料ではじめる」で
-   確認ダイアログが出て、設定画面のプラン表示がPlusに変わるか（決済は未接続のデモ動作）
+## TestFlightで配布する
 
-エラーが出た場合は、ターミナルのログとブラウザの開発者ツール（コンソール）のメッセージを
-あわせて確認してください。
+`npx eas-cli@latest build --profile beta --platform ios --auto-submit`
 
-## 画面構成
+beta プロファイルは危機介入画面の電話番号がダミーになる。公開用は production プロファイルを使う。
 
-- 起動 → オンボーディング(3枚) → 登録（ニックネームのみMVP実装、Apple/Googleは未接続）
-- ホーム：今日の気分入力（気分・きっかけ・メモ）→ AIチャットへ
-- はなす：AIとの対話（危機ワード検出時は自動で危機介入画面へ）
-- きろく：過去の会話の一覧・検索・振り返り
-- 設定：プロフィール、Plusへの導線、記録の書き出し／削除、緊急の相談窓口、FAQ
+## 環境変数（.env）
 
-## MVPとしての割り切り（今後の課題）
+| 変数 | 説明 |
+|---|---|
+| `EXPO_PUBLIC_CHAT_API_URL` | チャットAPIのURL。段階2でFirebase Cloud Functionsに接続するまでは空 |
+| `EXPO_PUBLIC_CRISIS_TEST_MODE` | `true` で危機介入画面の電話番号をダミーにする。本番ビルドでは必ず `false` |
 
-認証（Apple/Google未接続）・決済（UIのみ）・データ保存（端末内のみ）・危機検出の精度など、
-MVPとして割り切っている点の一覧と詳細は **[docs/SPEC.md](./docs/SPEC.md)**（現状できること／できないこと）、
-今後の実装課題（TODOバックログ）は **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** にまとめています。
+`.env.legacy` は旧試作版の環境変数（Anthropic APIキーを含む）。段階2でFirebaseのシークレットに移した後に削除する。
 
-> ⚠️ 危機介入の電話番号は `EXPO_PUBLIC_CRISIS_TEST_MODE` で開発中はダミーに切り替えられます。
-> 本番リリース時は必ず解除してください（上記セットアップ参照）。
+## 開発上の注意
 
-## 技術構成
-
-- Expo (React Native + react-native-web) / Expo Router
-- ローカルストレージ: `@react-native-async-storage/async-storage`
-- AI: `@anthropic-ai/sdk`（デフォルトモデル: `claude-sonnet-5`。`.env` の `ANTHROPIC_MODEL` で変更可）
+- パッケージ追加は `npx expo install <package>` を使う（SDK対応バージョンが入る）
+- 確認ダイアログは `Alert.alert` ではなく `src/lib/dialog.ts` の `showAlert` を使う（Webでも動くようにするため）
+- 型チェック: `npm run typecheck`
