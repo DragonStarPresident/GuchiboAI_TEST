@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { CRISIS_TEST_MODE, HOTLINES } from '@/lib/crisis';
 import { colors, spacing } from '@/lib/theme';
@@ -10,11 +10,7 @@ export default function Crisis() {
   const primary = HOTLINES[0];
 
   const call = (telHref: string) => {
-    if (Platform.OS === 'web') {
-      Linking.openURL(telHref).catch(() => {});
-    } else {
-      Linking.openURL(telHref).catch(() => {});
-    }
+    Linking.openURL(telHref).catch(() => {});
   };
 
   return (
@@ -27,7 +23,7 @@ export default function Crisis() {
         {CRISIS_TEST_MODE && (
           <View style={styles.testBanner}>
             <Text style={styles.testBannerText}>
-              ⚠️ テストモード：このページの電話番号はすべてダミーです（本物の相談窓口ではありません）
+              テストモード：このページの電話番号はすべてダミーです（本物の相談窓口ではありません）
             </Text>
           </View>
         )}
@@ -55,12 +51,13 @@ export default function Crisis() {
         ))}
 
         <PrimaryButton
-          label={`📞 ${primary.name}にかける`}
+          label={`${primary.name}にかける`}
+          icon={<Ionicons name="call" size={16} color="#fff" />}
           onPress={() => call(primary.telHref)}
           style={{ marginTop: spacing.lg, width: '100%' }}
         />
         <Pressable style={styles.continueLink} onPress={() => router.back()}>
-          <Text style={styles.continueLinkText}>😊 Guchiboと話を続ける</Text>
+          <Text style={styles.continueLinkText}>Guchiboと話を続ける</Text>
         </Pressable>
 
         <Text style={styles.disclaimer}>
@@ -73,8 +70,8 @@ export default function Crisis() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  close: { position: 'absolute', top: 56, right: spacing.lg, zIndex: 10, padding: spacing.sm },
-  content: { padding: spacing.lg, paddingTop: 90, alignItems: 'center' },
+  close: { position: 'absolute', top: spacing.md, right: spacing.md, zIndex: 10, padding: spacing.sm },
+  content: { padding: spacing.lg, paddingTop: spacing.xxl, paddingBottom: spacing.xxl, alignItems: 'center' },
   testBanner: {
     width: '100%',
     backgroundColor: '#FFF4CC',

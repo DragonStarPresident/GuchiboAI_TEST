@@ -1,25 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radius, spacing } from '@/lib/theme';
+import { Logo } from '@/components/Brand';
 import { ChatMessage } from '@/lib/storage';
+import { colors, radius, spacing } from '@/lib/theme';
 
 export function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
   return (
     <View style={[styles.row, isUser && styles.rowUser]}>
-      {!isUser && (
-        <View style={styles.avatar}>
-          <Text style={styles.avatarEmoji}>😊</Text>
+      {!isUser && <Logo size={30} style={styles.avatar} />}
+      <View style={{ maxWidth: '78%' }}>
+        <View
+          style={[
+            styles.bubble,
+            isUser ? styles.bubbleUser : styles.bubbleAi,
+            message.isCrisis && isUser && styles.bubbleCrisis,
+          ]}
+        >
+          <Text style={[styles.text, isUser && !message.isCrisis && styles.textUser]}>{message.content}</Text>
         </View>
-      )}
-      <View
-        style={[
-          styles.bubble,
-          isUser ? styles.bubbleUser : styles.bubbleAi,
-          message.isCrisis && styles.bubbleCrisis,
-        ]}
-      >
-        <Text style={[styles.text, isUser && styles.textUser]}>{message.content}</Text>
+        {message.isDemo && <Text style={styles.demoLabel}>デモ応答（AI未接続）</Text>}
       </View>
     </View>
   );
@@ -32,23 +32,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     paddingHorizontal: spacing.md,
   },
-  rowUser: {
-    justifyContent: 'flex-end',
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.sm,
-  },
-  avatarEmoji: {
-    fontSize: 14,
-  },
+  rowUser: { justifyContent: 'flex-end' },
+  avatar: { marginRight: spacing.sm, marginBottom: 2 },
   bubble: {
-    maxWidth: '78%',
     borderRadius: radius.md,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -61,15 +47,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryLight,
     borderBottomRightRadius: 4,
   },
-  bubbleCrisis: {
-    backgroundColor: colors.dangerSoft,
-  },
-  text: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  textUser: {
-    color: '#fff',
-  },
+  bubbleCrisis: { backgroundColor: colors.dangerSoft },
+  text: { fontSize: 15, lineHeight: 22, color: colors.text },
+  textUser: { color: '#fff' },
+  demoLabel: { fontSize: 10, color: colors.textMuted, marginTop: 4, marginLeft: 4 },
 });

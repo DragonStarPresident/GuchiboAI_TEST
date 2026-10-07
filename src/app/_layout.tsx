@@ -23,11 +23,12 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="register" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="chat" options={{ presentation: 'card' }} />
-        <Stack.Screen name="history/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="chat" />
+        <Stack.Screen name="consent" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="history/[id]" />
         <Stack.Screen name="crisis" options={{ presentation: 'modal' }} />
         <Stack.Screen name="subscription" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="help" options={{ presentation: 'card' }} />
+        <Stack.Screen name="help" />
       </Stack>
       <StatusBar style="dark" />
     </>

@@ -1,39 +1,40 @@
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card } from '@/components/Card';
+import { ScreenHeader } from '@/components/ScreenHeader';
+import { FREE_MONTHLY_LIMIT } from '@/lib/storage';
 import { colors, spacing } from '@/lib/theme';
 
 const FAQS = [
   {
-    q: 'Guchiboは医療行為やカウンセリングを行いますか？',
-    a: 'いいえ。Guchiboは医療行為・診断・治療を目的としたサービスではありません。うつ病などの治療を目的とするものではなく、気持ちを言葉にする対話の相手です。深刻な症状がある場合は、必ず医療機関や専門の相談窓口にご相談ください。',
+    q: 'Guchiboはどんなアプリですか？',
+    a: '気持ちをそのまま吐き出して、受け止めてもらうための対話アプリです。アドバイスや正解を出すのではなく、言葉にすることで少し心が軽くなることを大切にしています。',
   },
   {
-    q: '会話の内容は誰かに見られますか？',
-    a: 'あなたの会話内容は、あなたの許可なく公開されることはありません。',
+    q: 'ベータ版でできること・できないことは？',
+    a: '気分の記録、会話の記録、振り返りは使えます。AIとの会話は準備中のため、現在の返答はデモ用の定型文です。ログイン、課金、通知も準備中です。',
   },
   {
-    q: '無料プランでは何回話せますか？',
-    a: '無料プランでは月30回まで会話できます。回数を超えると、Guchibo Plus（有料プラン）へのご案内が表示されます。',
+    q: '医療行為やカウンセリングを行いますか？',
+    a: 'いいえ。Guchiboは医療行為・診断・治療を目的としたサービスではありません。深刻な症状があるときや、命の危険を感じるときは、医療機関や設定の「緊急の相談窓口」に相談してください。',
   },
   {
     q: '記録はどこに保存されますか？',
-    a: '現在のMVP版では、会話の記録はお使いの端末内にのみ保存されます。設定の「記録の保存と書き出し」からテキストとして書き出すこともできます。',
+    a: 'ベータ版では、記録はお使いの端末の中にだけ保存されます。アプリを削除すると記録も消えます。設定の「記録の書き出し」から、テキストとして残すこともできます。',
+  },
+  {
+    q: '無料で何回話せますか？',
+    a: `無料プランでは月${FREE_MONTHLY_LIMIT}回まで話せます。回数は毎月1日にリセットされます。`,
   },
 ];
 
 export default function Help() {
+  const insets = useSafeAreaInsets();
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12}>
-          <Ionicons name="chevron-back" size={24} color={colors.text} />
-        </Pressable>
-        <Text style={styles.headerTitle}>使い方・よくある質問</Text>
-      </View>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg, gap: spacing.md }}>
+      <ScreenHeader title="使い方・よくある質問" />
+      <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: insets.bottom + spacing.lg, gap: spacing.md }}>
         {FAQS.map((item) => (
           <Card key={item.q}>
             <Text style={styles.q}>Q. {item.q}</Text>
@@ -47,18 +48,6 @@ export default function Help() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingTop: 56,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitle: { fontSize: 16, fontWeight: '800', color: colors.text },
-  q: { fontSize: 14, fontWeight: '700', color: colors.text, marginBottom: spacing.sm },
+  q: { fontSize: 14, fontWeight: '800', color: colors.text, marginBottom: spacing.sm },
   a: { fontSize: 13, color: colors.textSecondary, lineHeight: 20 },
 });

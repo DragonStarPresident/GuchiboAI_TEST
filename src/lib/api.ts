@@ -23,6 +23,9 @@ export class ChatNotConfiguredError extends Error {
 
 const CHAT_API_URL = process.env.EXPO_PUBLIC_CHAT_API_URL;
 
+// チャットAPIが未設定のときはデモ応答モードで動かす（ベータ版のTestFlight配信用）
+export const CHAT_DEMO_MODE = !CHAT_API_URL;
+
 export async function sendChat(body: ChatRequest): Promise<ChatResponse> {
   if (!CHAT_API_URL) throw new ChatNotConfiguredError();
 

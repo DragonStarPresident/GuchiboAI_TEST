@@ -29,7 +29,9 @@ export interface HotlineInfo {
   telHref: string;
 }
 
-// 参照: リサーチ/マネタイズ.docx「Appendix：緊急時リソース一覧」
+// 参照: 厚生労働省「まもろうよ こころ」電話相談窓口一覧（2026-10-07確認）
+// https://www.mhlw.go.jp/mamorouyokokoro/soudan/tel
+// 公開前に最新の番号・受付時間を再確認すること。
 const REAL_HOTLINES: HotlineInfo[] = [
   {
     name: 'よりそいホットライン',
@@ -38,10 +40,16 @@ const REAL_HOTLINES: HotlineInfo[] = [
     telHref: 'tel:0120279338',
   },
   {
+    name: '#いのちSOS',
+    number: '0120-061-338',
+    hours: '24時間・通話無料',
+    telHref: 'tel:0120061338',
+  },
+  {
     name: 'いのちの電話',
-    number: '0570-783-556',
-    hours: '毎日16〜21時（毎月10日は8時〜翌8時）',
-    telHref: 'tel:0570783556',
+    number: '0120-783-556',
+    hours: '毎日16〜21時・毎月10日は終日（通話無料）',
+    telHref: 'tel:0120783556',
   },
   {
     name: '救急（命の危険を感じたら）',
@@ -55,26 +63,12 @@ const REAL_HOTLINES: HotlineInfo[] = [
 // EXPO_PUBLIC_CRISIS_TEST_MODE=true のときはダミー番号に差し替える。
 // クライアントに埋め込まれる値なので EXPO_PUBLIC_ プレフィックスが必要。
 // 【重要】本番リリース前には必ず false（未設定）に戻すこと。
-const DUMMY_HOTLINES: HotlineInfo[] = [
-  {
-    name: '（テスト用ダミー）よりそいホットライン',
-    number: '000-0000-0001',
-    hours: '24時間・通話無料',
-    telHref: 'tel:0000000001',
-  },
-  {
-    name: '（テスト用ダミー）いのちの電話',
-    number: '000-0000-0002',
-    hours: '毎日16〜21時（毎月10日は8時〜翌8時）',
-    telHref: 'tel:0000000002',
-  },
-  {
-    name: '（テスト用ダミー・119ではありません）救急',
-    number: '000-0000-0119',
-    hours: 'すぐにつながります',
-    telHref: 'tel:0000000119',
-  },
-];
+const DUMMY_HOTLINES: HotlineInfo[] = REAL_HOTLINES.map((h, i) => ({
+  name: `（テスト用ダミー）${h.name}`,
+  number: `000-0000-000${i + 1}`,
+  hours: h.hours,
+  telHref: `tel:000000000${i + 1}`,
+}));
 
 export const CRISIS_TEST_MODE = process.env.EXPO_PUBLIC_CRISIS_TEST_MODE === 'true';
 
